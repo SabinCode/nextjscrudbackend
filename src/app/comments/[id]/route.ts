@@ -2,10 +2,19 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { comments } from "../data";
+import { redirect } from "next/navigation";
+
 
 export async function GET (request: NextRequest,  context: {params: {id: string}}) {
     const {id} = context.params
     const comment = comments.find((comment) => comment.id === Number(id))
+
+    if(!comment) {
+        redirect("/comments") //if no comment found then redirect to all comments. 
+        //for eg. we have 5 comments only , but we r looking for 10 comment.
+        // It will redirect to all comments
+    }
+    
 
     return NextResponse.json(comment)
 }
@@ -35,7 +44,8 @@ export async function PATCH(request: NextRequest,  context: {params: {id: string
    const body = await request.json();
    comments[commentIndex].name = body.name,
    comments[commentIndex].comment = body.comment
-   
+
+  
    return NextResponse.json(comments[commentIndex])
 }
 
@@ -49,6 +59,6 @@ export async function DELETE (request: NextRequest,  context: {params: {id: stri
 
     const commentToDelete = comments[commentIndex]
     comments.splice(commentIndex, 1)
-    
+
     return NextResponse.json(commentToDelete)
 }
